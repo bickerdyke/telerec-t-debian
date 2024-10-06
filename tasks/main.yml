@@ -20,17 +20,25 @@
   debug:
     msg: Packages have been successfully installed
 
-- name: adding existing user '{{ user }}' to sudo group
+- name: adding existing user '{{ admin.name }}' to sudo group
   user:
-    name: '{{ admin.name }}'
+    name: "{{ admin.name }}"
     groups: sudo
     append: yes
 
+- name: Create docker group
+  group:
+    name: docker
+    state: present
+  become: true
+  become_method: sudo
+  tags: [always]
+
 - name: Create {{ docker_dir }} directory if needed
   file:
-    path: '{{ docker_dir }}'
+    path: "{{ docker_dir }}"
     state: directory
-    owner: '{{ admin.name }}'
-    group: 'docker'
+    owner: "{{ admin.name }}"
+    group: "docker"
     mode: 0775
-  tags: [ always ]
+  tags: [always]
